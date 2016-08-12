@@ -19,72 +19,9 @@ require('./bootstrap');
 
  window.echo = new Echo({key:'abbaac7da82e5cb49b2a', broadcaster:'pusher', cluster: 'eu', encrypted: true});
 
- echo.channel('tasks').listen('TaskCreated', function(event)
- {
- 	 console.log(event);
- 	 app.tasks.push(event.task);
- });
 
-
-
-Vue.component('example', require('./components/Example.vue'));
+Vue.component('task-list', require('./components/TaskList.vue'));
 
 var app = new Vue({
     el: 'body',
-
-		data: {
-				tasks: [],
-				newtask: ''
-		},
-
-		ready: function()
-		{
-			this.$http({url:'/tasks', method:'GET'}).then(function(response)
-			{
-				this.tasks = response.data;
-
-			}.bind(this), function(response)
-			{
-				console.log('no tasks');
-			}.bind(this));
-		},
-
-		methods: {
-
-			addTask: function()
-			{
-				if (this.newtask)
-				{
-					this.$http({url:'/tasks', method:'POST', body:{title:this.newtask}}).then(function(response)
-					{
-						//this.tasks.push(response.data);
-						this.newtask = '';
-
-					}.bind(this), function(response)
-					{
-
-					}.bind(this));
-				}
-			},
-
-			toggleTask: function(task)
-			{
-				this.$http({url:'/tasks/'+task.id, method:'PUT', body:{completed:!task.completed}});
-
-				task.completed = !task.completed;
-			},
-
-			removeCompletedTasks()
-			{
-				this.$http({url:'/tasks', method:'GET', params:{action:'cleanup'}}).then(function(response)
-				{
-					this.tasks = response.data;
-				}.bind(this),
-				function(response)
-				{
-					console.log('cleanup failed');
-				});
-			}
-		}
-
 });

@@ -9,9 +9,18 @@
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 
-a.list-group-item {
+td > a {
 
 	&.completed {
 		text-decoration: line-through;
 	}
+}
+
+body {
+
+	> .container
+	{
+		padding-top:30px;
+	}
+
 }

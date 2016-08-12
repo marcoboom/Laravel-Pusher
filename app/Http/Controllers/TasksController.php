@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskToggled;
+use App\Events\TaskDeleted;
 use App\Events\TaskCreated;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
 use App\Task;
+use App\User;
+use Notification;
 
 class TasksController extends Controller
 {
@@ -18,14 +22,9 @@ class TasksController extends Controller
      */
     public function index(Request $request)
     {
-				//	Cleanup
-				if ($request->get('action') == 'cleanup')
-				{
-					Task::where('completed',true)->delete();
-				}
-
-        return Task::all();
+        return Task::with('user')->get();
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -34,38 +33,26 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+
     public function store(Request $request)
     {
+				//	Validate the incoming data
         $this->validate($request, ['title'=>'required|string']);
 
-				$task = Task::create(['title'=>$request->title, 'completed'=>false]);
+				//	Create the task
+				$task = Task::create(['user_id'=>auth()->user()->id, 'title'=>$request->title, 'completed'=>false]);
 
+				//	Send notification to all users
+				Notification::send(User::all(), new \App\Notifications\TaskCreated($task));
+
+				//	Broadcast the new task to other users
 				event(new TaskCreated($task));
 
+				//	Return the task to the client
 				return $task;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -74,9 +61,13 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+
     public function update(Request $request, Task $task)
     {
         $task->update($request->all());
+
+				event(new TaskToggled($task));
 
 				return $task;
     }
@@ -87,8 +78,12 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+				event(new TaskDeleted($task->id));
+
     }
 }

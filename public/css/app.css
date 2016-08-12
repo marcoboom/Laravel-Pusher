@@ -5766,7 +5766,10 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
-a.list-group-item.completed {
+td > a.completed {
   text-decoration: line-through; }
+
+body > .container {
+  padding-top: 30px; }
 
 /*# sourceMappingURL=app.css.map */

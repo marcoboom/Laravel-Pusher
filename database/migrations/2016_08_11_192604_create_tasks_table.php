@@ -16,10 +16,14 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
 
+						$table->integer('user_id')->unsigned()->nullable();
+
 						$table->string('title');
 						$table->boolean('completed');
 
             $table->timestamps();
+
+						$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
@@ -28,8 +32,15 @@ class CreateTasksTable extends Migration
      *
      * @return void
      */
+
+		
     public function down()
     {
-        Schema::drop('tasks');
+			Schema::table('tasks', function (Blueprint $table)
+			{
+					$table->dropForeign('tasks_user_id_foreign');
+			});
+
+			Schema::drop('tasks');
     }
 }

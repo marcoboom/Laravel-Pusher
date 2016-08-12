@@ -11,8 +11,20 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('nexmo', function()
+{
+	$user = App\User::first();
+	$task = App\Task::first();
+
+	$user->notify(new App\Notifications\TaskCreated($task));
+
 });
 
-Route::resource('tasks', 'TasksController');
+Route::group(['middleware'=>'auth'], function()
+{
+		Route::resource('tasks', 'TasksController');
+		Route::get('/', 'HomeController@index');
+});
+
+
+Auth::routes();
