@@ -21,7 +21,22 @@
 
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							Taken
+							Nieuwe taak
+						</div>
+						<div class="panel-body">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Nieuwe taak" v-model="newtask" v-on:keyup.enter="addTask()">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" v-on:click="addTask()">OK</button>
+								</span>
+							</div><!-- /input-group -->
+						</div>
+					</div>
+
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							Overzicht
 						</div>
 						<div class="list-group">
 							<a href="#" class="list-group-item" v-for="task in tasks" v-bind:class="{'completed':task.completed}" v-on:click.prevent="toggleTask(task)">@{{ task.title }}</a>
@@ -40,21 +55,6 @@
 					  </div>
 					</div>
 
-					<hr />
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							Nieuwe taak
-						</div>
-						<div class="panel-body">
-							<div class="input-group">
-					      <input type="text" class="form-control" placeholder="Nieuwe taak" v-model="newtask" v-on:keyup.enter="addTask()">
-					      <span class="input-group-btn">
-					        <button class="btn btn-default" type="button" v-on:click="addTask()">OK</button>
-					      </span>
-					    </div><!-- /input-group -->
-						</div>
-					</div>
 
 				</div>
 
